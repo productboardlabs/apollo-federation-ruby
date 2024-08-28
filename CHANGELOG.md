@@ -1,3 +1,5 @@
+# ping
+
 ## [3.8.5](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.4...v3.8.5) (2024-04-02)
 
 
