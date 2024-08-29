@@ -96,6 +96,7 @@ jobs:
       - appraisal-install:
           appraisal: << parameters.appraisal >>
       - gusto/yarn-install
+      - bundle-install # WTF
       - run: bundle exec appraisal << parameters.appraisal >> yarn test
       - run: yarn lint
   release:
