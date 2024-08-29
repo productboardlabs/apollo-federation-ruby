@@ -543,7 +543,12 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          extra_types book, product
+        else
+          orphan_types book, product
+        end
+
         federation version: '2.0'
       end
 
@@ -595,7 +600,12 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          extra_types book, product
+        else
+          orphan_types book
+        end
+
         federation version: '2.0'
       end
 
@@ -693,6 +703,12 @@ RSpec.describe ApolloFederation::ServiceField do
         field :upc, String, null: false
       end
 
+      store = Class.new(base_object) do
+        graphql_name 'Store'
+
+        field :book, book, null: true
+      end
+
       product = Class.new(base_union) do
         graphql_name 'Product'
 
@@ -702,7 +718,13 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book, product
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          orphan_types store, book
+          extra_types product
+        else
+          orphan_types book, product
+        end
+
         federation version: '2.0'
       end
 
@@ -721,8 +743,6 @@ RSpec.describe ApolloFederation::ServiceField do
     end
 
     it 'returns valid SDL for inaccessible union types' do
-      skip('Orphan unions are not supported in graphql-ruby since 2.3.0') if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
-
       base_union = Class.new(GraphQL::Schema::Union) do
         include ApolloFederation::Union
       end
@@ -731,6 +751,12 @@ RSpec.describe ApolloFederation::ServiceField do
         graphql_name 'Book'
 
         field :upc, String, null: false
+      end
+
+      store = Class.new(base_object) do
+        graphql_name 'Store'
+
+        field :book, book, null: true
       end
 
       product = Class.new(base_union) do
@@ -742,7 +768,12 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book, product
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          orphan_types store
+          extra_types book, product
+        else
+          orphan_types book, product
+        end
         federation version: '2.0'
       end
 
@@ -780,7 +811,12 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types product_type, product
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          extra_types product_type
+        else
+          orphan_types product_type, product
+        end
+
         federation version: '2.0'
       end
 
@@ -817,7 +853,12 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types product_type, product
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          extra_types product_type
+        else
+          orphan_types product_type, product
+        end
+
         federation version: '2.0'
       end
 
