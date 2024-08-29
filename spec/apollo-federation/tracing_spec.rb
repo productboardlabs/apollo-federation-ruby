@@ -5,19 +5,19 @@ require 'apollo-federation'
 
 RSpec.describe ApolloFederation::Tracing do
   RSpec.shared_examples 'a basic tracer' do
-    let(:expected_end_time) {
+    let(:expected_end_time) do
       if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
         1_564_920_003
       else
         1_564_920_002
       end
-    }
+    end
 
-    let(:schema_interpreter??) do
+    let(:schema_interpreter?) do
       if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.11')
         false
       else
-        schema.interpreter??
+        schema.interpreter?
       end
     end
 
