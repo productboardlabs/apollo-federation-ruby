@@ -723,15 +723,17 @@ RSpec.describe ApolloFederation::ServiceField do
     it 'returns valid SDL for inaccessible union types' do
       skip('Orphan unions are not supported in graphql-ruby since 2.3.0') if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
 
+      base_union = Class.new(GraphQL::Schema::Union) do
+        include ApolloFederation::Union
+      end
+
       book = Class.new(base_object) do
         graphql_name 'Book'
 
         field :upc, String, null: false
       end
 
-      product = Class.new(GraphQL::Schema::Union) do
-        include ApolloFederation::Union
-
+      product = Class.new(base_union) do
         graphql_name 'Product'
 
         inaccessible
@@ -739,14 +741,8 @@ RSpec.describe ApolloFederation::ServiceField do
         possible_types book
       end
 
-      store = Class.new(base_object) do
-        graphql_name 'Store'
-
-        field :books, product, null: false
-      end
-
       schema = Class.new(base_schema) do
-        orphan_types store
+        orphan_types book, product
         federation version: '2.0'
       end
 
