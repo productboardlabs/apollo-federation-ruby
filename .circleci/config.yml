@@ -126,6 +126,8 @@ workflows:
                 ruby: '3.2'
               - appraisal: 'graphql-1.12'
                 ruby: '3.2'
+              - appraisal: 'graphql-2.3'
+                ruby: '3.0'
       - integration-tests:
           matrix:
             parameters:
@@ -138,6 +140,8 @@ workflows:
                 ruby: '3.2'
               - appraisal: 'graphql-1.12'
                 ruby: '3.2'
+              - appraisal: 'graphql-2.3'
+                ruby: '3.0'
       - release:
           requires:
             - ruby-lint
