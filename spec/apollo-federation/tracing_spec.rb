@@ -599,8 +599,6 @@ RSpec.describe ApolloFederation::Tracing do
         it 'properly captures the error' do
           traced_data = trace('{ items { id, name }').to_h
 
-          p GraphQL::VERSION
-
           if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
             expected_captured_error = {
               message: 'Expected NAME, actual: (none) ("") at [1, 20]',
