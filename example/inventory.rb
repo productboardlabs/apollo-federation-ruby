@@ -47,7 +47,7 @@ class InventorySchema < GraphQL::Schema
     use GraphQL::Analysis::AST
   end
 
-  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('3.2.0')
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('2.3.0')
     use ApolloFederation::Tracing
   else
     trace_with ApolloFederation::Tracing

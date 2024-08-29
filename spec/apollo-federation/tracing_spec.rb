@@ -5,6 +5,22 @@ require 'apollo-federation'
 
 RSpec.describe ApolloFederation::Tracing do
   RSpec.shared_examples 'a basic tracer' do
+    let(:expected_end_time) {
+      if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+        1_564_920_003
+      else
+        1_564_920_002
+      end
+    }
+
+    let(:schema_interpreter??) do
+      if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.11')
+        false
+      else
+        schema.interpreter??
+      end
+    end
+
     # configure clocks to increment by 1 for each call
     before do
       t = Time.new(2019, 8, 4, 12, 0, 0, '+00:00')
@@ -146,7 +162,7 @@ RSpec.describe ApolloFederation::Tracing do
         query = '{ parent { id, child { id, grandchild { id } } } }'
         expect(trace(query)).to eq(ApolloFederation::Tracing::Trace.new(
                                      start_time: { seconds: 1_564_920_001, nanos: 0 },
-                                     end_time: { seconds: 1_564_920_002, nanos: 0 },
+                                     end_time: { seconds: expected_end_time, nanos: 0 },
                                      duration_ns: 13,
                                      root: {
                                        child: [{
@@ -196,7 +212,7 @@ RSpec.describe ApolloFederation::Tracing do
       it 'works for scalar arrays' do
         expect(trace('{ strings }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          end_time: { seconds: expected_end_time, nanos: 0 },
           duration_ns: 3,
           root: {
             child: [{
@@ -271,7 +287,7 @@ RSpec.describe ApolloFederation::Tracing do
       it 'works with lazy values' do
         expect(trace('{ lazyScalar }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          end_time: { seconds: expected_end_time, nanos: 0 },
           duration_ns: 4,
           root: {
             child: [{
@@ -292,17 +308,17 @@ RSpec.describe ApolloFederation::Tracing do
       it 'works with an array of lazy scalars' do
         expect(trace('{ arrayOfLazyScalars }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          end_time: { seconds: expected_end_time, nanos: 0 },
           # The old runtime and the interpreter handle arrays of lazy objects differently.
           # The old runtime doesn't trigger the `execute_field_lazy` tracer event, so we have to
           # use the (inaccurate) end times from the `execute_field` event.
-          duration_ns: schema.interpreter? ? 5 : 3,
+          duration_ns: schema_interpreter? ? 5 : 3,
           root: {
             child: [{
               response_name: 'arrayOfLazyScalars',
               type: '[String!]!',
               start_time: 1,
-              end_time: schema.interpreter? ? 4 : 2,
+              end_time: schema_interpreter? ? 4 : 2,
               parent_type: 'Query',
             }],
           },
@@ -312,7 +328,7 @@ RSpec.describe ApolloFederation::Tracing do
       it 'works with a lazy array of scalars' do
         expect(trace('{ lazyArrayOfScalars }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          end_time: { seconds: expected_end_time, nanos: 0 },
           duration_ns: 4,
           root: {
             child: [{
@@ -329,14 +345,14 @@ RSpec.describe ApolloFederation::Tracing do
       it 'works with a lazy array of lazy scalars' do
         expect(trace('{ lazyArrayOfLazyScalars }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
-          duration_ns: schema.interpreter? ? 6 : 4,
+          end_time: { seconds: expected_end_time, nanos: 0 },
+          duration_ns: schema_interpreter? ? 6 : 4,
           root: {
             child: [{
               response_name: 'lazyArrayOfLazyScalars',
               type: '[String!]!',
               start_time: 1,
-              end_time: schema.interpreter? ? 5 : 3,
+              end_time: schema_interpreter? ? 5 : 3,
               parent_type: 'Query',
             }],
           },
@@ -346,14 +362,14 @@ RSpec.describe ApolloFederation::Tracing do
       it 'works with array of lazy objects' do
         expect(trace('{ arrayOfLazyObjects { id } }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
-          duration_ns: schema.interpreter? ? 9 : 7,
+          end_time: { seconds: expected_end_time, nanos: 0 },
+          duration_ns: schema_interpreter? ? 9 : 7,
           root: {
             child: [{
               response_name: 'arrayOfLazyObjects',
               type: '[Item!]!',
               start_time: 1,
-              end_time: schema.interpreter? ? 6 : 2,
+              end_time: schema_interpreter? ? 6 : 2,
               parent_type: 'Query',
               child: [
                 {
@@ -361,8 +377,8 @@ RSpec.describe ApolloFederation::Tracing do
                   child: [{
                     response_name: 'id',
                     type: 'String!',
-                    start_time: schema.interpreter? ? 4 : 3,
-                    end_time: schema.interpreter? ? 5 : 4,
+                    start_time: schema_interpreter? ? 4 : 3,
+                    end_time: schema_interpreter? ? 5 : 4,
                     parent_type: 'Item',
                   }],
                 },
@@ -371,8 +387,8 @@ RSpec.describe ApolloFederation::Tracing do
                   child: [{
                     response_name: 'id',
                     type: 'String!',
-                    start_time: schema.interpreter? ? 7 : 5,
-                    end_time: schema.interpreter? ? 8 : 6,
+                    start_time: schema_interpreter? ? 7 : 5,
+                    end_time: schema_interpreter? ? 8 : 6,
                     parent_type: 'Item',
                   }],
                 },
@@ -425,8 +441,8 @@ RSpec.describe ApolloFederation::Tracing do
         query = '{ lazyScalar arrayOfLazyScalars lazyArrayOfScalars }'
         expect(trace(query)).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
-          duration_ns: schema.interpreter? ? 11 : 9,
+          end_time: { seconds: expected_end_time, nanos: 0 },
+          duration_ns: schema_interpreter? ? 11 : 9,
           root: {
             child: [{
               response_name: 'lazyScalar',
@@ -438,7 +454,7 @@ RSpec.describe ApolloFederation::Tracing do
               response_name: 'arrayOfLazyScalars',
               type: '[String!]!',
               start_time: 3,
-              end_time: schema.interpreter? ? 10 : 4,
+              end_time: schema_interpreter? ? 10 : 4,
               parent_type: 'Query',
             }, {
               response_name: 'lazyArrayOfScalars',
@@ -486,7 +502,7 @@ RSpec.describe ApolloFederation::Tracing do
         expect(trace('{ items { id, name } }')).to eq(
           ApolloFederation::Tracing::Trace.new(
             start_time: { seconds: 1_564_920_001, nanos: 0 },
-            end_time: { seconds: 1_564_920_002, nanos: 0 },
+            end_time: { seconds: expected_end_time, nanos: 0 },
             duration_ns: 11,
             root: {
               child: [{
@@ -548,7 +564,7 @@ RSpec.describe ApolloFederation::Tracing do
           expect(trace('{ items { id, name }')).to eq(
             ApolloFederation::Tracing::Trace.new(
               start_time: { seconds: 1_564_920_001, nanos: 0 },
-              end_time: { seconds: 1_564_920_002, nanos: 0 },
+              end_time: { seconds: expected_end_time, nanos: 0 },
               duration_ns: 1,
               root: {
                 child: [],
@@ -571,7 +587,7 @@ RSpec.describe ApolloFederation::Tracing do
           expect(trace('{ nonExistant }')).to eq(
             ApolloFederation::Tracing::Trace.new(
               start_time: { seconds: 1_564_920_001, nanos: 0 },
-              end_time: { seconds: 1_564_920_002, nanos: 0 },
+              end_time: { seconds: expected_end_time, nanos: 0 },
               duration_ns: 1,
               root: {
                 child: [],
