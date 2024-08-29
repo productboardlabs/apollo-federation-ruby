@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "logger"
+require 'logger'
 require 'spec_helper'
 require 'apollo-federation/any'
 require 'action_controller'
