@@ -121,7 +121,7 @@ DEPENDENCIES
   appraisal
   graphql (~> 2.0.0)
   pry-byebug
-  rack
+  rack (~> 2.0)
   rake
   rspec
   rubocop (~> 0.75.0)
