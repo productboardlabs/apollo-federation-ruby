@@ -96,7 +96,7 @@ jobs:
       - appraisal-install:
           appraisal: << parameters.appraisal >>
       - gusto/yarn-install
-      - run: APPRAISAL_NAME=<< parameters.appraisal >> bundle exec appraisal << parameters.appraisal >> yarn test
+      - run: APPRAISAL_NAME=<< parameters.appraisal >> yarn test
       - run: yarn lint
   release:
     docker:
