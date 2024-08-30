@@ -87,7 +87,7 @@ jobs:
       ruby:
         type: string
     docker:
-      - image: cimg/ruby:<< parame`ters.ruby >>-node
+      - image: cimg/ruby:<< parameters.ruby >>-node
     environment:
       BUNDLE_APP_CONFIG: .bundle
     steps:
