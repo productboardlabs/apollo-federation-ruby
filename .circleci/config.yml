@@ -87,7 +87,7 @@ jobs:
       ruby:
         type: string
     docker:
-      - image: cimg/ruby:<< parameters.ruby >>-node
+      - image: cimg/ruby:<< parame`ters.ruby >>-node
     environment:
       BUNDLE_APP_CONFIG: .bundle
     steps:
@@ -96,7 +96,7 @@ jobs:
       - appraisal-install:
           appraisal: << parameters.appraisal >>
       - gusto/yarn-install
-      - run: bundle exec appraisal << parameters.appraisal >> APPRAISAL_NAME=<< parameters.appraisal >> yarn test
+      - run: APPRAISAL_NAME=<< parameters.appraisal >> bundle exec appraisal << parameters.appraisal >> yarn test
       - run: yarn lint
   release:
     docker:
