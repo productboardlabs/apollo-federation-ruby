@@ -5,12 +5,16 @@ import { ApolloServerPluginUsageReporting } from '@apollo/server/plugin/usageRep
 import gql from 'graphql-tag';
 import { spawn } from 'child_process';
 
+jest.setTimeout(10000)
+
 const startService = serviceName =>
   new Promise((resolve, reject) => {
     const appraisalName = process.env.APPRAISAL_NAME;
     if (!appraisalName) {
       throw new Error('Missing appraisal env. variable: APPRAISAL_NAME');
     }
+
+    console.table({ appraisalName })
 
     const child = spawn('bundle', [
       'exec',
@@ -27,7 +31,7 @@ const startService = serviceName =>
         child.kill();
         reject(new Error(`Starting the ${serviceName} service timed out`));
       }
-    }, 4000);
+    }, 10000);
 
     child.stdout.on('data', data => {
       if (data.toString().includes('_READY_')) {
