@@ -7,12 +7,19 @@ import { spawn } from 'child_process';
 
 const startService = serviceName =>
   new Promise((resolve, reject) => {
-    var appraisalName = process.env.APPRAISAL_NAME
+    const appraisalName = process.env.APPRAISAL_NAME;
     if (!appraisalName) {
-      throw new Error("Missing appraisal env. variable: APPRAISAL_NAME")
+      throw new Error('Missing appraisal env. variable: APPRAISAL_NAME');
     }
 
-    const child = spawn('bundle', ['exec', 'appraisal', appraisalName, 'ruby', `./example/${serviceName}.rb`, '--test']);
+    const child = spawn('bundle', [
+      'exec',
+      'appraisal',
+      appraisalName,
+      'ruby',
+      `./example/${serviceName}.rb`,
+      '--test',
+    ]);
 
     let ready = false;
     const readyTimeout = setTimeout(() => {
@@ -61,7 +68,9 @@ const serviceList = [
 ];
 
 beforeAll(async () => {
-  serviceProcesses = await Promise.all(serviceList.map(({ name }) => startService(name))).catch(console.error);
+  serviceProcesses = await Promise.all(serviceList.map(({ name }) => startService(name))).catch(
+    console.error,
+  );
 
   const gateway = new ApolloGateway({
     supergraphSdl: new IntrospectAndCompose({
