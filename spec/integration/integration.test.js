@@ -9,15 +9,8 @@ jest.setTimeout(10000)
 
 const startService = serviceName =>
   new Promise((resolve, reject) => {
-    const appraisalName = process.env.APPRAISAL_NAME;
-    if (!appraisalName) {
-      throw new Error('Missing appraisal env. variable: APPRAISAL_NAME');
-    }
-
-    console.table({ appraisalName })
-
     const child = spawn(
-      `bundle exec appraisal ${appraisalName} ruby ./example/${serviceName}.rb --test`,
+      `bundle exec ruby ./example/${serviceName}.rb --test`,
       [],
       { shell: true },
     );
