@@ -17,7 +17,7 @@ const startService = serviceName =>
     console.table({ appraisalName })
 
     const child = spawn(
-      `bundle exec appraisal ${appraisalName} ruby ./example/${serviceName}.rb --test`,
+      `bundle exec appraisal ${appraisalName} bundle && ruby ./example/${serviceName}.rb --test`,
       [],
       { shell: true },
     );
