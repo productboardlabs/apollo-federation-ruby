@@ -31,6 +31,7 @@ const startService = serviceName =>
     }, 10000);
 
     child.stdout.on('data', data => {
+      console.log(data.toString());
       if (data.toString().includes('_READY_')) {
         clearTimeout(readyTimeout);
         ready = true;
