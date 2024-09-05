@@ -96,6 +96,7 @@ jobs:
       - appraisal-install:
           appraisal: << parameters.appraisal >>
       - gusto/yarn-install
+      - run: bundle config set path './vendor/bundle'
       - run: bundle exec appraisal << parameters.appraisal >> yarn test
       - run: yarn lint
   release:
