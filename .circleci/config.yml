@@ -9,13 +9,13 @@ commands:
       - run:
           name: Configure Bundler
           command: |
-            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
+            echo 'export BUNDLER_VERSION=2.5.7' >> $BASH_ENV
             source $BASH_ENV
-            gem install bundler
+            gem install bundler -v $BUNDLER_VERSION
       - restore_cache:
           name: Restore Ruby Package Cache
           keys:
-            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile" }}
             - v6-gem-cache-{{ arch }}-{{ .Branch }}-
             - v6-gem-cache-{{ arch }}-
       - run:
@@ -24,7 +24,7 @@ commands:
             bundle install --jobs=1 --retry=3 --path=vendor/bundle
       - save_cache:
           name: Save Ruby Package Cache
-          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile" }}
           paths:
             - ./vendor/bundle
   appraisal-install:
@@ -35,11 +35,11 @@ commands:
       - run:
           name: Copy lockfile
           command: |
-            bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE.lock current_appraisal.gemfile.lock"
+            bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE.gemfile current_appraisal.gemfile"
       - restore_cache:
           name: Restore Appraisal package cache
           keys:
-            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile" }}
             - v6-gem-cache-{{ arch }}-{{ .Branch }}-
             - v6-gem-cache-{{ arch }}-
       - run:
@@ -48,7 +48,7 @@ commands:
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=1 --retry=3 --path=./vendor/bundle
       - save_cache:
           name: Save Appraisal package cache
-          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile" }}
           paths:
             - ./vendor/bundle
 
