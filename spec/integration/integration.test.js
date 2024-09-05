@@ -23,7 +23,8 @@ const startService = serviceName =>
       'ruby',
       `./example/${serviceName}.rb`,
       '--test',
-    ]);
+      { shell: true },
+    );
 
     let ready = false;
     const readyTimeout = setTimeout(() => {
