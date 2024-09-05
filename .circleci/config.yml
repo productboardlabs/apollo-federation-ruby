@@ -98,7 +98,7 @@ jobs:
       - gusto/yarn-install
       - run: bundle config set path './vendor/bundle'
       - run: bundle exec appraisal bundle config set path '../vendor/bundle'
-      - run: bundle exec appraisal << parameters.appraisal >> yarn test
+      - run: bundle exec appraisal << parameters.appraisal >> yarn test --forceExit
       - run: yarn lint
   release:
     docker:
