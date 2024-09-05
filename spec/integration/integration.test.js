@@ -5,15 +5,11 @@ import { ApolloServerPluginUsageReporting } from '@apollo/server/plugin/usageRep
 import gql from 'graphql-tag';
 import { spawn } from 'child_process';
 
-jest.setTimeout(10000)
+jest.setTimeout(10000);
 
 const startService = serviceName =>
   new Promise((resolve, reject) => {
-    const child = spawn(
-      `bundle exec ruby ./example/${serviceName}.rb --test`,
-      [],
-      { shell: true },
-    );
+    const child = spawn(`bundle exec ruby ./example/${serviceName}.rb --test`, [], { shell: true });
 
     let ready = false;
     const readyTimeout = setTimeout(() => {
