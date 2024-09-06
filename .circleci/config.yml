@@ -33,7 +33,7 @@ commands:
       - run:
           name: Copy current appraisal gemspec
           command: |
-            bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE.gemfile current_appraisal.gemfile"
+            bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE current_appraisal.gemfile"
       - restore_cache:
           name: Restore Appraisal package cache
           keys:
