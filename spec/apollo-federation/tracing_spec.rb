@@ -688,5 +688,21 @@ RSpec.describe ApolloFederation::Tracing do
     end
 
     it_behaves_like 'a basic tracer'
+
+    if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+      context 'when using trace_with' do
+        let(:base_schema) do
+          Class.new(GraphQL::Schema) do
+            trace_with ApolloFederation::Tracing::Tracer
+            if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+              use GraphQL::Execution::Interpreter
+              use GraphQL::Analysis::AST
+            end
+          end
+        end
+
+        it_behaves_like 'a basic tracer'
+      end
+    end
   end
 end
