@@ -56,7 +56,7 @@ module ApolloFederation
           arguments: arguments,
           object: object,
           owner: field.owner,
-          path: query.context[:current_path]
+          path: query.context[:current_path],
         ) { yield }
       end
 
@@ -68,7 +68,7 @@ module ApolloFederation
           arguments: arguments,
           object: object,
           owner: field.owner,
-          path: query.context[:current_path]
+          path: query.context[:current_path],
         ) { yield }
       end
 
