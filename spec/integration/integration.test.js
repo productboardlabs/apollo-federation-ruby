@@ -47,10 +47,6 @@ const startService = serviceName =>
         console.error(`Error from ${serviceName} service: ${data}`);
       }
     });
-
-    child.on('close', (code, signal) =>
-      console.log(`child process terminated due to receipt of signal ${signal} (${code})`),
-    );
   });
 
 let gatewayServer;
