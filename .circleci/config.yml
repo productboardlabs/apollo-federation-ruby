@@ -34,6 +34,8 @@ commands:
             - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile" }}
       - run:
           name: Install appraisal dependencies
+          # Appraisal by default will install dependencies under `gemfiles/vendor/bundle`, so if we want
+          # to have them under `vendor/bundle` we need to specify `../vendor/bundle`
           command: |
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=1 --retry=3 --path=../vendor/bundle
       - save_cache:
@@ -87,7 +89,12 @@ jobs:
           appraisal: << parameters.appraisal >>
       - gusto/yarn-install
       - run: bundle config set path './vendor/bundle'
+      # Tell appraisal to use the common cache under `vendor/bundle` in the main directory
+      # instead of `gemfiles/vendor/bundle`:
       - run: bundle exec appraisal bundle config set path '../vendor/bundle'
+      # Sometimes graphql servers aren't getting closed quickly enough on CI.
+      # We don't care about it as long as the tests pass.
+      # Let's quit as soon as the tests pass by using `forceExit` flag.
       - run: bundle exec appraisal << parameters.appraisal >> yarn test --forceExit
       - run: yarn lint
   release:
