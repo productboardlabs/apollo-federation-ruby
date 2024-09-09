@@ -6,12 +6,6 @@ orbs:
 commands:
   bundle-install:
     steps:
-      - run:
-          name: Configure Bundler
-          command: |
-            echo 'export BUNDLER_VERSION=2.5.7' >> $BASH_ENV
-            source $BASH_ENV
-            gem install bundler -v $BUNDLER_VERSION
       - restore_cache:
           name: Restore Ruby Package Cache
           keys:
