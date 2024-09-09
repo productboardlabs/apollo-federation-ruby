@@ -72,6 +72,8 @@ module ApolloFederation
         ) { yield }
       end
 
+      # The method below was used by older versions of graphql-ruby.
+      # After graphq-ruby 2.3.0 the trace modules should respond to specific methods such as `execute_field` above.
       def self.trace(key, data, &block)
         case key
         when EXECUTE_MULTIPLEX
