@@ -112,5 +112,9 @@ module ApolloFederation
         GraphQL::Language::Nodes::Argument.new(name: arg[:name], value: arg[:values])
       end
     end
+
+    def warden
+      @warden ||= GraphQL::Schema::Warden.new(context: {}, schema: schema)
+    end
   end
 end
