@@ -88,7 +88,7 @@ module ApolloFederation
     def query_type?(type)
       return type == warden.root_type_for_operation('query') if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('2.3.8')
 
-      type == @types.query_root&.graphql_name
+      type == @types.query_root
     end
 
     def merge_directives(node, type)
