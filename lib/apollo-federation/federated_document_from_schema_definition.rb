@@ -69,7 +69,7 @@ module ApolloFederation
     def build_type_definition_nodes(types)
       non_federation_types = types.select do |type|
         if query_type?(type)
-          fields_for_type(type).all? { |field| FEDERATION_QUERY_FIELDS.include?(field.graphql_name) }
+          !fields_for_type(type).all? { |field| FEDERATION_QUERY_FIELDS.include?(field.graphql_name) }
         else
           !FEDERATION_TYPES.include?(type.graphql_name)
         end
