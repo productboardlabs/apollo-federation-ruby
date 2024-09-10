@@ -54,9 +54,11 @@ RSpec.describe ApolloFederation::ServiceField do
           <<~GRAPHQL,
             extend schema
               @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
             type Product @federation__key(fields: "upc") {
               upc: String!
             }
+
             type Query {
               product: Product
             }
@@ -82,6 +84,7 @@ RSpec.describe ApolloFederation::ServiceField do
               _service: _Service!
               test: String!
             }
+
             """
             The sdl representing the federated service capabilities. Includes federation
             directives, removes federation types, and includes rest of full schema after
