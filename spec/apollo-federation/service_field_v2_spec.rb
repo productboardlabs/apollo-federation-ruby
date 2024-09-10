@@ -31,37 +31,6 @@ RSpec.describe ApolloFederation::ServiceField do
     end
 
     context 'when a Query object is provided' do
-      it 'adds a _service field to the Query object' do
-        query_obj = Class.new(base_object) do
-          graphql_name 'Query'
-
-          field :test, String, null: false
-        end
-
-        schema = Class.new(base_schema) do
-          query query_obj
-          federation version: '2.0'
-        end
-
-        expect(schema.to_definition).to match_sdl(
-          <<~GRAPHQL,
-            type Query {
-              _service: _Service!
-              test: String!
-            }
-
-            """
-            The sdl representing the federated service capabilities. Includes federation
-            directives, removes federation types, and includes rest of full schema after
-            schema directives have been applied
-            """
-            type _Service {
-              sdl: String
-            }
-          GRAPHQL
-        )
-      end
-
       it 'returns valid SDL for @key directives' do
         product = Class.new(base_object) do
           graphql_name 'Product'
@@ -92,6 +61,37 @@ RSpec.describe ApolloFederation::ServiceField do
 
             type Query {
               product: Product
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'adds a _service field to the Query object' do
+        query_obj = Class.new(base_object) do
+          graphql_name 'Query'
+
+          field :test, String, null: false
+        end
+
+        schema = Class.new(base_schema) do
+          query query_obj
+          federation version: '2.0'
+        end
+
+        expect(schema.to_definition).to match_sdl(
+          <<~GRAPHQL,
+            type Query {
+              _service: _Service!
+              test: String!
+            }
+
+            """
+            The sdl representing the federated service capabilities. Includes federation
+            directives, removes federation types, and includes rest of full schema after
+            schema directives have been applied
+            """
+            type _Service {
+              sdl: String
             }
           GRAPHQL
         )
@@ -603,7 +603,12 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          extra_types book, product
+        else
+          orphan_types book, product
+        end
+
         federation version: '2.0'
       end
 
@@ -655,7 +660,12 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          extra_types book, product
+        else
+          orphan_types book
+        end
+
         federation version: '2.0'
       end
 
@@ -753,6 +763,12 @@ RSpec.describe ApolloFederation::ServiceField do
         field :upc, String, null: false
       end
 
+      store = Class.new(base_object) do
+        graphql_name 'Store'
+
+        field :book, book, null: true
+      end
+
       product = Class.new(base_union) do
         graphql_name 'Product'
 
@@ -762,7 +778,13 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book, product
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          orphan_types store, book
+          extra_types product
+        else
+          orphan_types book, product
+        end
+
         federation version: '2.0'
       end
 
@@ -791,6 +813,12 @@ RSpec.describe ApolloFederation::ServiceField do
         field :upc, String, null: false
       end
 
+      store = Class.new(base_object) do
+        graphql_name 'Store'
+
+        field :book, book, null: true
+      end
+
       product = Class.new(base_union) do
         graphql_name 'Product'
 
@@ -800,7 +828,12 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book, product
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          orphan_types store
+          extra_types book, product
+        else
+          orphan_types book, product
+        end
         federation version: '2.0'
       end
 
@@ -838,7 +871,12 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types product_type, product
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          extra_types product_type
+        else
+          orphan_types product_type, product
+        end
+
         federation version: '2.0'
       end
 
@@ -875,7 +913,12 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types product_type, product
+        if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+          extra_types product_type
+        else
+          orphan_types product_type, product
+        end
+
         federation version: '2.0'
       end
 
