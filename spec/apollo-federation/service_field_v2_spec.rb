@@ -30,6 +30,71 @@ RSpec.describe ApolloFederation::ServiceField do
       schema.execute('{ _service { sdl } }')['data']['_service']['sdl']
     end
 
+    context 'when a Query object is provided' do
+      it 'returns valid SDL for @key directives' do
+        product = Class.new(base_object) do
+          graphql_name 'Product'
+          key fields: :upc
+
+          field :upc, String, null: false
+        end
+
+        query_obj = Class.new(base_object) do
+          graphql_name 'Query'
+
+          field :product, product, null: true
+        end
+
+        schema = Class.new(base_schema) do
+          query query_obj
+          federation version: '2.0'
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+            type Product @federation__key(fields: "upc") {
+              upc: String!
+            }
+            type Query {
+              product: Product
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'adds a _service field to the Query object' do
+        query_obj = Class.new(base_object) do
+          graphql_name 'Query'
+
+          field :test, String, null: false
+        end
+
+        schema = Class.new(base_schema) do
+          query query_obj
+          federation version: '2.0'
+        end
+
+        expect(schema.to_definition).to match_sdl(
+          <<~GRAPHQL,
+            type Query {
+              _service: _Service!
+              test: String!
+            }
+            """
+            The sdl representing the federated service capabilities. Includes federation
+            directives, removes federation types, and includes rest of full schema after
+            schema directives have been applied
+            """
+            type _Service {
+              sdl: String
+            }
+          GRAPHQL
+        )
+      end
+    end
+
     context 'when a Query object is not provided' do
       it 'creates a Query object with a _service field' do
         schema = Class.new(base_schema)
@@ -1267,74 +1332,6 @@ RSpec.describe ApolloFederation::ServiceField do
           }
         GRAPHQL
       )
-    end
-
-    context 'when a Query object is provided' do
-      it 'returns valid SDL for @key directives' do
-        product = Class.new(base_object) do
-          graphql_name 'Product'
-          key fields: :upc
-
-          field :upc, String, null: false
-        end
-
-        query_obj = Class.new(base_object) do
-          graphql_name 'Query'
-
-          field :product, product, null: true
-        end
-
-        schema = Class.new(base_schema) do
-          query query_obj
-          federation version: '2.0'
-        end
-
-        expect(execute_sdl(schema)).to match_sdl(
-          <<~GRAPHQL,
-            extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
-
-            type Product @federation__key(fields: "upc") {
-              upc: String!
-            }
-
-            type Query {
-              product: Product
-            }
-          GRAPHQL
-        )
-      end
-
-      it 'adds a _service field to the Query object' do
-        query_obj = Class.new(base_object) do
-          graphql_name 'Query'
-
-          field :test, String, null: false
-        end
-
-        schema = Class.new(base_schema) do
-          query query_obj
-          federation version: '2.0'
-        end
-
-        expect(schema.to_definition).to match_sdl(
-          <<~GRAPHQL,
-            type Query {
-              _service: _Service!
-              test: String!
-            }
-
-            """
-            The sdl representing the federated service capabilities. Includes federation
-            directives, removes federation types, and includes rest of full schema after
-            schema directives have been applied
-            """
-            type _Service {
-              sdl: String
-            }
-          GRAPHQL
-        )
-      end
     end
 
     it 'returns valid SDL for multiple @key directives' do
