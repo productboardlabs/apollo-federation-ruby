@@ -86,7 +86,7 @@ module ApolloFederation
     end
 
     def query_type?(type)
-      return type == warden.root_type_for_operation('query') use_warden?
+      return type == warden.root_type_for_operation('query') if use_warden?
 
       type == @types.query_root
     end
