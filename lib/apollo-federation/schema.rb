@@ -71,7 +71,7 @@ module ApolloFederation
 
         <<~SCHEMA
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3"#{federation_namespace}, import: [#{(@imported_directives.map { |directive| "\"@#{directive}\"" }).join(', ')}])
+            @link(url: "https://specs.apollo.dev/federation/v2.3"#{federation_namespace}, import: [#{(get_imported_directives.map { |directive| "\"@#{directive}\"" }).join(', ')}])
 
         SCHEMA
       end
