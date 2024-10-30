@@ -7,13 +7,14 @@ require 'apollo-federation/federated_document_from_schema_definition.rb'
 
 module ApolloFederation
   module Schema
+    class_attribute :imported_directives, default: %w[inaccessible tag].freeze
+
     def self.included(klass)
       klass.extend(CommonMethods)
     end
 
     module CommonMethods
       DEFAULT_LINK_NAMESPACE = 'federation'
-      DEFAULT_IMPORTED_DIRECTIVES = %w[inaccessible tag].freeze
 
       def federation(version: '1.0', link: {})
         @federation_version = version
@@ -22,14 +23,6 @@ module ApolloFederation
 
       def federation_version
         @federation_version || find_inherited_value(:federation_version, '1.0')
-      end
-
-      def set_imported_directives(directives)
-        @imported_directives = (DEFAULT_IMPORTED_DIRECTIVES + directives).uniq
-      end
-
-      def get_imported_directives
-        @imported_directives || DEFAULT_IMPORTED_DIRECTIVES
       end
 
       def federation_2?
