@@ -248,7 +248,7 @@ RSpec.describe ApolloFederation::ServiceField do
           extend schema
             @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag", "@key", "@shareable"])
 
-          type Position @federation__shareable {
+          type Position @shareable {
             x: Int!
             y: Int!
           }
@@ -395,7 +395,7 @@ RSpec.describe ApolloFederation::ServiceField do
             extend schema
               @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag", "@key", "@shareable"])
 
-            type Position @fed2__shareable {
+            type Position @shareable {
               x: Int!
               y: Int!
             }
@@ -505,7 +505,7 @@ RSpec.describe ApolloFederation::ServiceField do
             extend schema
               @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag", "@key", "@shareable"])
 
-            type Product @fed2__key(fields: "upc") {
+            type Product @key(fields: "upc") {
               upc: String!
             }
 
@@ -563,7 +563,7 @@ RSpec.describe ApolloFederation::ServiceField do
             extend schema
               @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag", "@key", "@shareable"])
 
-            type Product @fed2__interfaceObject @fed2__key(fields: "id") {
+            type Product @fed2__interfaceObject @key(fields: "id") {
               id: ID!
             }
           GRAPHQL
