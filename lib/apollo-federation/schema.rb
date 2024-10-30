@@ -24,7 +24,7 @@ module ApolloFederation
         @federation_version || find_inherited_value(:federation_version, '1.0')
       end
 
-      def set_imported_directives(directives)
+      def import_directives(directives)
         @imported_directives = directives.uniq
       end
 

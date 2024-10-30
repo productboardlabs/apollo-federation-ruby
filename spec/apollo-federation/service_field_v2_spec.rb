@@ -351,7 +351,7 @@ RSpec.describe ApolloFederation::ServiceField do
       schema = Class.new(base_schema) do
         query query_obj
         federation version: '2.0'
-        set_imported_directives %w[tag key]
+        import_directives %w[tag key]
       end
 
       expect(execute_sdl(schema)).to match_sdl(
