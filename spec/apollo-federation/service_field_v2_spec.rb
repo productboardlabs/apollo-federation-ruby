@@ -334,6 +334,42 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for @key directives with custom imported_directives' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        key fields: :upc
+
+        field :upc, String, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+        import_directives %w[tag key]
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@tag", "@key"])
+
+          type Product @key(fields: "upc") {
+            upc: String!
+          }
+
+          type Query {
+            product: Product
+          }
+        GRAPHQL
+      )
+    end
+
     context 'with a custom link namespace provided' do
       it 'returns valid SDL for type extensions with custom namespace' do
         product = Class.new(base_object) do
