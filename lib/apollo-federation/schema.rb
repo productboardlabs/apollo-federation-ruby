@@ -25,7 +25,7 @@ module ApolloFederation
       end
 
       def set_imported_directives(directives)
-        @imported_directives = DEFAULT_IMPORTED_DIRECTIVES + directives
+        @imported_directives = (DEFAULT_IMPORTED_DIRECTIVES + directives).uniq
       end
 
       def get_imported_directives
