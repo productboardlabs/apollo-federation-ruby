@@ -12,3 +12,5 @@ node_modules/
 
 Gemfile.lock
 gemfiles/*.gemfile.lock
+
+.idea
