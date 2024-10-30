@@ -115,7 +115,7 @@ module ApolloFederation
     end
 
     def directive_name(directive)
-      if schema.federation_2? && !Schema::IMPORTED_DIRECTIVES.include?(directive[:name])
+      if schema.federation_2? && !schema.get_imported_directives.include?(directive[:name])
         "#{schema.link_namespace}__#{directive[:name]}"
       else
         directive[:name]
