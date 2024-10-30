@@ -536,7 +536,7 @@ RSpec.describe ApolloFederation::ServiceField do
             extend schema
               @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag", "@key", "@shareable"])
 
-            type Product @fed2__extends @fed2__key(fields: "upc") {
+            type Product @fed2__extends @key(fields: "upc") {
               price: Int
               upc: String! @fed2__external
             }
@@ -1494,8 +1494,8 @@ RSpec.describe ApolloFederation::ServiceField do
             @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag", "@key", "@shareable"])
 
           type Position {
-            x: Int! @federation__shareable
-            y: Int! @federation__shareable
+            x: Int! @shareable
+            y: Int! @shareable
           }
 
           type Query {
